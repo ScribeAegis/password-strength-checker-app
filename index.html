@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Strength Checker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #000000;
+            overflow: hidden;
+        }
+
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        #password-container {
+            z-index: 1;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            width: 350px;
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #password-container:hover {
+            transform: scale(1.02);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input {
+            width: calc(100% - 16px);
+            padding: 12px;
+            margin-bottom: 14px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            color: #333;
+            transition: border-color 0.3s ease-in-out;
+        }
+
+        input:focus {
+            border-color: #007bff;
+        }
+
+        #password-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        #show-password,
+        #generate-password {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px;
+            cursor: pointer;
+            color: #007bff;
+            text-decoration: none;
+            background: none;
+            border: none;
+            font-size: 14px;
+            transition: color 0.3s ease-in-out;
+        }
+
+        #show-password:hover,
+        #generate-password:hover {
+            color: #0056b3;
+        }
+
+        #password-strength {
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        #feedback-message {
+            color: red;
+            margin-bottom: 12px;
+        }
+
+        #copy-to-clipboard {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px;
+            cursor: pointer;
+            color: #28a745;
+            text-decoration: none;
+            background: none;
+            border: none;
+            font-size: 14px;
+            transition: color 0.3s ease-in-out;
+        }
+
+        #copy-to-clipboard:hover {
+            color: #218838;
+        }
+
+        #password-length {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .password-requirements {
+            margin-top: 12px;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+    <!-- Use your preferred particles.js CDN or host the file locally -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+</head>
+
+<body>
+    <div id="particles-js"></div>
+    <div id="password-container">
+        <h1>Password Strength Checker</h1>
+        <div id="password-wrapper">
+            <label for="password" id="password-label">Enter your password:</label>
+            <div>
+                <input type="password" id="password" oninput="checkPasswordStrength()" aria-labelledby="password-label">
+                <span id="password-length">Length: 0</span>
+            </div>
+        </div>
+        <a href="#" id="show-password" onclick="togglePasswordVisibility()">
+            <i class="fas fa-eye"></i> Show Password
+        </a>
+        <p id="password-strength">Password strength: <span id="strength-text">Weak</span></p>
+        <p id="feedback-message"></p>
+        <div class="password-requirements">
+            Password should contain at least one uppercase letter, one lowercase letter, one number, and one special character.
+        </div>
+        <a href="#" id="generate-password" onclick="generatePassword()">Generate Strong Password</a>
+        <button id="copy-to-clipboard" onclick="copyToClipboard()">Copy to Clipboard</button>
+    </div>
+
+    <script>
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 80,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: "#ffcc00", /* Particle color changed to yellow */
+                    opacity: 0.7
+                },
+                shape: {
+                    type: "circle",
+                    stroke: {
+                        width: 0,
+                        color: "#000000"
+                    },
+                    polygon: {
+                        nb_sides: 5
+                    }
+                },
+                opacity: {
+                    value: 0.5,
+                    random: false,
+                    anim: {
+                        enable: false,
+                        speed: 1,
+                        opacity_min: 0.1,
+                        sync: false
+                    }
+                },
+                size: {
+                    value: 3,
+                    random: true,
+                    anim: {
+                        enable: false,
+                        speed: 40,
+                        size_min: 0.1,
+                        sync: false
+                    }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#ffcc00", /* Particle line color changed to yellow */
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 6,
+                    direction: "none",
+                    random: false,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false,
+                    attract: {
+                        enable: false,
+                        rotateX: 600,
+                        rotateY: 1200
+                    }
+                }
+            },
+            interactivity: {
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: "repulse"
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: "push"
+                    }
+                },
+                modes: {
+                    grab: {
+                        distance: 400,
+                        line_linked: {
+                            opacity: 1
+                        }
+                    },
+                    bubble: {
+                        distance: 400,
+                        size: 40,
+                        duration: 2,
+                        opacity: 8,
+                        speed: 3
+                    },
+                    repulse: {
+                        distance: 200
+                    },
+                    push: {
+                        particles_nb: 4
+                    },
+                    remove: {
+                        particles_nb: 2
+                    }
+                }
+            },
+            retina_detect: true
+        });
+
+        const passwordInput = document.getElementById('password');
+        const strengthText = document.getElementById('strength-text');
+        const feedbackMessage = document.getElementById('feedback-message');
+        const passwordLengthIndicator = document.getElementById('password-length');
+
+        function checkPasswordStrength() {
+            const password = passwordInput.value;
+            const result = zxcvbn(password);
+
+            strengthText.textContent = getStrengthLabel(result.score);
+            feedbackMessage.textContent = result.feedback.suggestions.join(' ');
+
+            feedbackMessage.style.color = result.score >= 3 ? '#28a745' : '#dc3545';
+
+            passwordLengthIndicator.textContent = `Length: ${password.length}`;
+        }
+
+        function getStrengthLabel(score) {
+            switch (score) {
+                case 0: return 'Very Weak';
+                case 1: return 'Weak';
+                case 2: return 'Moderate';
+                case 3: return 'Strong';
+                case 4: return 'Very Strong';
+                default: return '';
+            }
+        }
+
+        function togglePasswordVisibility() {
+            const passwordType = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = passwordType;
+        }
+
+        function generatePassword() {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+';
+            const passwordLength = 12;
+            let generatedPassword = '';
+
+            for (let i = 0; i < passwordLength; i++) {
+                const randomIndex = Math.floor(Math.random() * characters.length);
+                generatedPassword += characters.charAt(randomIndex);
+            }
+
+            passwordInput.value = generatedPassword;
+            checkPasswordStrength();
+        }
+
+        function copyToClipboard() {
+            const passwordField = document.getElementById('password');
+            passwordField.select();
+            document.execCommand('copy');
+            alert('Password copied to clipboard!');
+        }
+    </script>
+</body>
+
+</html>

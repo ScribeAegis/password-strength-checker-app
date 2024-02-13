@@ -1,0 +1,17 @@
+{
+  "name": "password-strength-checker-app",
+  "version": "1.0.0",
+  "description": "Password Strength Checker App",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron main.js",
+    "pack": "electron-builder",
+    "dist": "electron-builder --win"
+  },
+  "author": "zoHC (https://github.com/zoHC)",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^16.0.0",
+    "electron-builder": "^22.13.0"
+  }
+}
