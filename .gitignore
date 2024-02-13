@@ -1,0 +1,40 @@
+# Node.js
+node_modules/
+
+# Dependency directory
+dist/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Editor configuration
+.vscode/
+
+# Logs
+logs/
+*.log
+
+# Build files
+build/
+*.exe
+*.dll
+
+# npm configuration
+*.npmrc
+
+# Git configuration
+.gitignore
+.gitattributes
+
+# Visual Studio Code
+.vscode/
+
+# Environment variables file
+.env
+
+# Electron build artifacts
+out/
+dist/
