@@ -1,6 +1,6 @@
 {
   "name": "password-strength-checker-app",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Password Strength Checker App",
   "main": "main.js",
   "scripts": {
