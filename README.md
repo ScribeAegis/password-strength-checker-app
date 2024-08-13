@@ -33,7 +33,7 @@ A simple desktop application to check the strength of passwords, built using Ele
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/zoHC/password-strength-checker-app.git
+   git clone https://github.com/ScribeAegis/password-strength-checker-app.git
 
 Navigate to the project folder:
 cd password-strength-checker-app
